@@ -1,3 +1,7 @@
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/jsvectormap@latest/dist/css/jsvectormap.min.css"
+/>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -30,6 +34,11 @@
     nav a:hover {
         color: #444444;
     }
+
+    #map {
+        width: 1150px;
+        margin: 0 auto;
+    }
 </style>
 <body>
     <nav>
@@ -40,6 +49,19 @@
         <a href="gallery.html">Gallery</a>
         <a href="map.html">Map</a>
     </nav>
-    <h2 id="experience">Work Experience</h2>
-    <p>🍓 Computer Vision Research Assistant - Wang Plant Phenomics Lab</p>
+    <div id="map">
+        <script src="https://cdn.jsdelivr.net/npm/jsvectormap@latest/dist/js/jsvectormap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jsvectormap@latest/dist/maps/world.js"></script>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const map = new jsVectorMap({
+                    selector: "#map",
+                    map: "world",
+                    zoomButtons: false,
+                    selectedRegions: ["US", "CA", "MX"],
+                });
+            });
+        </script>
+    </div>
 </body>
