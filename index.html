@@ -30,8 +30,23 @@
     nav a:hover {
         color: #444444;
     }
+
+    /* Flexbox Styles for the icon containers */
+    .flex-container {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .flex-container img {
+        height: 50px;
+        width: 50px;
+    }
 </style>
+
 <body>
+    <!-- Navigation bar (commented out for now) -->
+    <!--
     <nav>
         <a href="index.html">About Me </a>
         <a href="experience.html">Work Experience </a>
@@ -39,32 +54,12 @@
         <a href="skills.html">Technical Skills</a>
         <a href="map.html">Map</a>
     </nav>
+    -->
+
     <h2 id="hello-">Hello!</h2>
     <p>
         Hi, I’m Soor Hansalia, a Computer Science student at the University of
-        Florida🐊. Whether it’s diving into a new programming language or
-        experimenting with side projects, I love the process of figuring things
-        out and making cool things.
-    </p>
-
-    <p>
-        Right now, I’m working as a Computer Vision Research Assistant at the
-        Wang Plant Phenomics Lab. My work focuses on using computer vision to
-        study strawberry plants, which has helped me develop skills in machine
-        learning, image processing, and data analysis.
-    </p>
-
-    <p>
-        Looking ahead, I’m aiming for a career in software engineering, data
-        engineering, or data science. I’m especially interested in how data can
-        be used to solve complex problems in the financial sector.
-    </p>
-
-    <p>
-        When I’m not coding, you can find me in the kitchen trying out new
-        recipes, working out, or exploring niche personal finance hacks. If you
-        have any interesting project ideas or want to discuss why cast iron pans
-        are the best, please reach out!
+        Florida🐊. 
     </p>
 
     <p>
@@ -86,5 +81,134 @@
                 alt="Email"
             />
         </a>
+    </p>
+
+    <h2 id="experience">Work Experience</h2>
+    <p>🤫 Data Engineering Intern - Stealth</p>
+    <p>🍓 Computer Vision Research Assistant - Wang Plant Phenomics Lab</p>
+
+    <h2 id="languages">Languages</h2>
+    <div class="flex-container">
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg"
+            alt="Python"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg"
+            alt="C++"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg"
+            alt="JavaScript"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg"
+            alt="TypeScript"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg"
+            alt="HTML5"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg"
+            alt="CSS3"
+        />
+    </div>
+
+    <h2 id="frameworks-and-libraries">Frameworks and Libraries</h2>
+    <div class="flex-container">
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pandas/pandas-original.svg"
+            alt="Pandas"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/numpy/numpy-original.svg"
+            alt="NumPy"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/matplotlib/matplotlib-original.svg"
+            alt="Matplotlib"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/discordjs/discordjs-original-wordmark.svg"
+            alt="Discord.js"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/flask/flask-original.svg"
+            alt="Flask"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg"
+            alt="React"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg"
+            alt="Node.js"
+            style="width: 70px;"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/express/express-original-wordmark.svg"
+            alt="Express"
+            style="width: 70px;"
+        />
+    </div>
+
+    <h2 id="databases-and-tools">Databases and Tools</h2>
+    <div class="flex-container">
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg"
+            alt="MongoDB"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/firebase/firebase-original.svg"
+            alt="Firebase"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/supabase/supabase-original.svg"
+            alt="Supabase"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/sqlite/sqlite-original.svg"
+            alt="SQLite"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg"
+            alt="Git"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/bash/bash-original.svg"
+            alt="Bash"
+        />
+        <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg"
+            alt="GitHub"
+        />
+    </div>
+
+    <h2 id="projects">Projects</h2>
+    <p>
+        👮 Gainesville Crime -
+        <a href="https://gainesville-crime.vercel.app/">Website</a> -
+        <a href="https://youtu.be/rCIC9kfx13o/">Video Showcase</a> -
+        <a href="https://github.com/Soor1/gainesville-crime">Github</a>
+    </p>
+    <p>
+        📈 Stock Info Bot -
+        <a href="https://discord.com/oauth2/authorize?client_id=1241418921014464512">Add To Discord Server</a>
+        - <a href="https://github.com/Soor1/StockInfoBot">Github</a>
+    </p>
+    <p>
+        ⛰️ Understanding Earthquake Strength -
+        <a href="https://github.com/hugoliu-code/Group27-Final">Github</a>
+    </p>
+    <p>
+        ⚙️ Mechenvision -
+        <a href="https://github.com/hugoliu-code/MechEnvision">Website</a> -
+        <a href="https://mech-envision.vercel.app">Github</a>
+    </p>
+    <p>
+        📚 UF Engineering Schedule Helper (No Longer Active) -
+        <a href="https://github.com/Soor1/UF_Engineering_Schedule_Helper">Video Showcase</a> -
+        <a href="https://youtu.be/qZ9bWrZJgvc?si=2hv9qjm6s3I_koy1">Github</a>
     </p>
 </body>
