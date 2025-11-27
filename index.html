@@ -143,8 +143,8 @@ function renderTables(vars, rows, vhi, vlo, inputActiveLowMap, outputActiveLow){
   const vt = document.createElement('table');
   const vthead = document.createElement('thead');
   const vtrh = document.createElement('tr');
-  vars.forEach(v=>{ const th=document.createElement('th'); th.textContent = v + (inputActiveLowMap[v] ? ' (A-L)' : ''); vtrh.appendChild(th); });
-  const thVOut = document.createElement('th'); thVOut.textContent = 'OUT' + (outputActiveLow ? ' (A-L)' : ''); vtrh.appendChild(thVOut);
+  vars.forEach(v=>{ const th=document.createElement('th'); th.textContent = v + (inputActiveLowMap[v] ? '(L)' : ''); vtrh.appendChild(th); });
+  const thVOut = document.createElement('th'); thVOut.textContent = 'OUT' + (outputActiveLow ? '(L)' : ''); vtrh.appendChild(thVOut);
   vthead.appendChild(vtrh); vt.appendChild(vthead);
   const vtb = document.createElement('tbody');
   rows.forEach(r=>{
