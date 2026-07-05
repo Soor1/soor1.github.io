@@ -1,0 +1,248 @@
+/* ============================================================
+   Site theme: "datasheet" — styled like an IC/PCB spec sheet.
+   Palette: soldermask green-black + copper trace + phosphor signal green.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+:root{
+  --bg: #0b0f0d;
+  --surface: #121815;
+  --surface-2: #171f1a;
+  --line: #26312a;
+  --line-bright: #3a4a3f;
+  --copper: #c68a52;
+  --copper-bright: #e3a869;
+  --signal: #8fd66a;
+  --signal-dim: #5c9a49;
+  --text: #e9efe9;
+  --text-dim: #93a49a;
+  --text-faint: #5f6e65;
+
+  --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  --sans: 'IBM Plex Sans', -apple-system, Segoe UI, sans-serif;
+}
+
+*{ box-sizing: border-box; }
+
+html{ scroll-behavior: smooth; }
+
+body{
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  line-height: 1.55;
+  /* faint grid, like PCB substrate */
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 42px 42px;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+a{ color: var(--signal); text-decoration: none; }
+a:hover{ text-decoration: underline; }
+a:focus-visible, button:focus-visible, input:focus-visible{
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+/* ---------------- Top nav — styled like a pin/channel strip ---------------- */
+
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(11,15,13,0.92);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--line);
+}
+
+.topbar-inner{
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.brand{
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  color: var(--copper-bright);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.brand .dot{
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 6px var(--signal);
+}
+
+.navlinks{
+  display: flex;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+}
+
+.navlinks a{
+  color: var(--text-dim);
+  padding: 7px 12px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.navlinks a:hover{
+  color: var(--text);
+  text-decoration: none;
+  border-color: var(--line-bright);
+}
+.navlinks a.active{
+  color: var(--bg);
+  background: var(--signal);
+  border-color: var(--signal);
+}
+
+/* ---------------- Page shell with fiducial-marked frame ---------------- */
+
+.page{
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.sheet{
+  position: relative;
+  border: 1px solid var(--line-bright);
+  background: var(--surface);
+  padding: 36px clamp(20px, 5vw, 56px);
+}
+
+/* fiducial marks — corner crosses like a PCB fabrication frame */
+.sheet::before, .sheet::after,
+.sheet .fid-tl, .sheet .fid-tr, .sheet .fid-bl, .sheet .fid-br{
+  content: "";
+  position: absolute;
+  width: 14px; height: 14px;
+  pointer-events: none;
+}
+.fid{
+  position: absolute; width: 14px; height: 14px; pointer-events: none;
+}
+.fid::before, .fid::after{
+  content: ""; position: absolute; background: var(--copper);
+}
+.fid::before{ width: 14px; height: 1px; top: 6.5px; left: 0; }
+.fid::after{ width: 1px; height: 14px; left: 6.5px; top: 0; }
+.fid-tl{ top: -1px; left: -1px; }
+.fid-tr{ top: -1px; right: -1px; }
+.fid-bl{ bottom: -1px; left: -1px; }
+.fid-br{ bottom: -1px; right: -1px; }
+
+.eyebrow{
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--copper);
+  margin: 0 0 10px;
+}
+
+h1{
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: clamp(28px, 4.5vw, 44px);
+  letter-spacing: -0.01em;
+  margin: 0 0 6px;
+  color: var(--text);
+}
+
+h2{
+  font-family: var(--mono);
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  color: var(--signal);
+  margin: 0 0 14px;
+  text-transform: uppercase;
+}
+
+p{ color: var(--text-dim); margin: 0 0 14px; max-width: 68ch; }
+
+.rule{
+  border: none;
+  border-top: 1px dashed var(--line-bright);
+  margin: 28px 0;
+}
+
+/* ---------------- Spec table (datasheet parameter rows) ---------------- */
+
+.spec-table{
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 14px;
+  margin-top: 8px;
+}
+.spec-table tr{ border-bottom: 1px solid var(--line); }
+.spec-table tr:last-child{ border-bottom: none; }
+.spec-table td{ padding: 11px 4px; vertical-align: top; }
+.spec-table td.field{
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11.5px;
+  width: 160px;
+  white-space: nowrap;
+  padding-top: 13px;
+}
+.spec-table td.value{ color: var(--text); font-size: 15px; }
+.spec-table .placeholder{ color: var(--text-faint); font-style: italic; }
+
+/* ---------------- Buttons / inputs ---------------- */
+
+.btn{
+  font-family: var(--mono);
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: transparent;
+  color: var(--signal);
+  border: 1px solid var(--signal-dim);
+  padding: 9px 16px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.btn:hover{ background: rgba(143,214,106,0.08); border-color: var(--signal); }
+
+.field-input{
+  font-family: var(--mono);
+  font-size: 13.5px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-bright);
+  color: var(--text);
+  padding: 9px 12px;
+  border-radius: 3px;
+}
+.field-input::placeholder{ color: var(--text-faint); }
+
+/* ---------------- Footer ---------------- */
+
+.sitefoot{
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+  padding: 30px 24px 50px;
+  text-transform: uppercase;
+}

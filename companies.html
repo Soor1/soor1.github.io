@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Semiconductor Companies</title>
+<link rel="stylesheet" href="style.css" />
+<style>
+  .toolbar{
+    display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+    margin-bottom: 18px;
+  }
+  #filterInput{ flex: 1 1 260px; min-width: 200px; }
+  .count{ font-family: var(--mono); font-size: 12px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .co-table{ width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  .co-table thead th{
+    text-align: left; font-family: var(--mono); font-size: 11.5px; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--copper); padding: 8px 10px; border-bottom: 1px solid var(--line-bright);
+    position: sticky; top: 53px; background: var(--surface);
+  }
+  .co-table td{ padding: 9px 10px; border-bottom: 1px solid var(--line); color: var(--text); }
+  .co-table tbody tr:hover{ background: var(--surface-2); }
+  .co-table td.idx{ font-family: var(--mono); color: var(--text-faint); width: 44px; font-size: 12px; }
+  .co-table td.linkcell{ font-family: var(--mono); font-size: 12.5px; }
+  .link-empty{ color: var(--text-faint); }
+  .link-ready a{ color: var(--signal); }
+  .hidden-row{ display: none; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="dot"></span>YOUR-NAME.IO</div>
+    <nav class="navlinks">
+      <a href="index.html">Home</a>
+      <a href="truth-table.html">Truth Table</a>
+      <a href="companies.html" class="active">Companies</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page">
+  <section class="sheet">
+    <span class="fid fid-tl"></span><span class="fid fid-tr"></span>
+    <span class="fid fid-bl"></span><span class="fid fid-br"></span>
+
+    <p class="eyebrow">Reference &nbsp;·&nbsp; Semiconductor Industry</p>
+    <h1>Company Directory</h1>
+    <p>
+      A running list of semiconductor companies, kept in one place so I can track down careers
+      pages and internship postings over time. Links are added as I find them — most are empty for now.
+    </p>
+
+    <div class="toolbar">
+      <input id="filterInput" class="field-input" type="text" placeholder="Filter by company name…" />
+      <span class="count" id="countLabel"></span>
+    </div>
+
+    <table class="co-table">
+      <thead>
+        <tr>
+          <th class="idx">#</th>
+          <th>Company</th>
+          <th>Careers page</th>
+          <th>Internships</th>
+        </tr>
+      </thead>
+      <tbody id="coBody"></tbody>
+    </table>
+  </section>
+</main>
+
+<footer class="sitefoot">Built &amp; maintained by you · updated 2026</footer>
+
+<script>
+/* ============================================================
+   HOW TO ADD LINKS LATER
+   ------------------------------------------------------------
+   Each entry below is an object: { name, careers, internship }.
+   - "careers"    -> URL to the company's general careers/jobs page
+   - "internship" -> URL to a specific internship posting or
+                     internship-program page
+
+   Leave a field as an empty string "" to show "—" (not added yet).
+   To add a link, just fill in the string, e.g.:
+
+     { name: "NVIDIA", careers: "https://www.nvidia.com/en-us/about-nvidia/careers/", internship: "" }
+
+   That's the only place you need to edit — the table below
+   renders automatically from this array.
+   ============================================================ */
+
+const companies = [
+  "NVIDIA","TSMC","Broadcom","Samsung","Micron Technology","SK Hynix","AMD","ASML","Intel",
+  "Applied Materials","Lam Research","Arm Holdings","KLA","Texas Instruments","Marvell Technology",
+  "Tokyo Electron","QUALCOMM","MediaTek","Analog Devices","Advantest","Cambricon Technologies",
+  "Infineon","ASE Group","SMIC","Synopsys","NAURA Technology Group","GigaDevice Semiconductor",
+  "Coherent Corp.","NXP Semiconductors","Astera Labs","Monolithic Power Systems",
+  "United Microelectronics","STMicroelectronics","AMEC","Renesas Electronics","ASM International",
+  "Disco Corp.","Microchip Technology","Credo Technology","GlobalFoundries","Nanya Technology",
+  "Hua Hong Semiconductor Limited","Cerebras Systems","ON Semiconductor","Qnity Electronics",
+  "Xi'an Eswin Material Technology Co.,Ltd.","Tower Semiconductor","MACOM Technology Solutions",
+  "Lasertec","VeriSilicon Microelectronics","BE Semiconductor","Entegris","Technoprobe",
+  "Amkor Technology","SCREEN Holdings","Hwatsing Technology","Lattice Semiconductor",
+  "Global Unichip Corp.","SiTime","National Silicon Industry Group","China Resources Microelectronics",
+  "Onto Innovation","Tongfu Microelectronics Co.,Ltd","San'an Optoelectronics","HANMI Semiconductor",
+  "Nova Ltd.","Kokusai Electric","Lite-On Technology","GlobalWafers","Semtech","Rohm",
+  "Silan Microelectronics","SG Micro","Realtek","Vanguard International Semiconductor",
+  "Allegro MicroSystems","Powerchip Semiconductor Manufacturing","ASMPT (ASM Pacific Technology)",
+  "Silicon Motion","Skyworks Solutions","FormFactor","Alchip Technologies","Novatek Microelectronics",
+  "AT&S Austria Technologie & Systemtechnik","Qorvo","Sumco Corporation","Vishay Intertechnology",
+  "Cirrus Logic","ACM Research","Silicon Labs","Camtek","Silergy","eMemory Technology","Aixtron",
+  "Kulicke and Soffa Industries","Galaxycore","WIN Semiconductors","SmartSens Technology",
+  "UCT (Ultra Clean Holdings)","Axcelis Technologies","Maruwa","VisEra Technologies",
+  "Rorze Corporation","Soitec","AXT Inc","Power Integrations","DB HiTek","Veeco",
+  "Navitas Semiconductor","Micronics Japan Co., Ltd.","Formosa Sumco Technology",
+  "Espressif Systems (Shanghai)","Bestechnic","Nordic Semiconductor","Elmos Semiconductor",
+  "nLIGHT","Melexis NV","Ichor Systems","Sino-American Silicon Products","Cohu","Aehr Test Systems",
+  "Siltronic","Socionext","Ambarella","PDF Solutions","Tekscend Photomask","Himax Technologies",
+  "Wolfspeed","ChipMOS Technologies","SÜSS MicroTec","Arteris","Sivers Semiconductors AB",
+  "Ambiq Micro","Photronics","SkyWater Technology","POET Technologies","TOWA Corporation",
+  "Sanken Electric Co., Ltd.","Weebit Nano","Alpha & Omega Semiconductor","u-blox","X-FAB","CEVA",
+  "RS Technologies","IQE plc","indie Semiconductor","SEALSQ","Everspin Technologies","Xperi",
+  "Aeluma","Amtech Systems","Quicklogic","Atomera","Riber S.A.","BrainChip",
+  "centrotherm international","Valens Semiconductor","GCT Semiconductor","inTEST Corporation",
+  "Magnachip Semiconductor","Kalray","Sequans Communications","Pixelworks","Mobix Labs"
+].map(name => ({ name, careers: "", internship: "" }));
+
+const tbody = document.getElementById('coBody');
+const filterInput = document.getElementById('filterInput');
+const countLabel = document.getElementById('countLabel');
+
+function linkCell(url){
+  if(url && url.trim().length){
+    return `<span class="link-ready"><a href="${url}" target="_blank" rel="noopener">View →</a></span>`;
+  }
+  return `<span class="link-empty">—</span>`;
+}
+
+function render(filter){
+  const q = (filter || '').trim().toLowerCase();
+  tbody.innerHTML = '';
+  let shown = 0;
+  companies.forEach((c, i) => {
+    const match = !q || c.name.toLowerCase().includes(q);
+    if(!match) return;
+    shown++;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="idx">${i + 1}</td>
+      <td>${c.name}</td>
+      <td class="linkcell">${linkCell(c.careers)}</td>
+      <td class="linkcell">${linkCell(c.internship)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+  countLabel.textContent = `${shown} / ${companies.length} companies`;
+}
+
+filterInput.addEventListener('input', (e) => render(e.target.value));
+render('');
+</script>
+</body>
+</html>

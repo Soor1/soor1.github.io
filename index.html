@@ -1,274 +1,74 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Truth Table ⇄ Voltage Table Converter</title>
-  <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;max-width:980px;margin:18px auto;padding:18px}
-    h1{font-size:20px;margin-bottom:6px}
-    label{display:inline-block;margin:6px 0}
-    textarea{width:100%;height:70px;font-family:monospace}
-    input[type=text], input[type=number]{padding:6px;margin:4px 0}
-    .row{display:flex;gap:12px;align-items:center}
-    table{border-collapse:collapse;width:100%;margin-top:12px}
-    th,td{border:1px solid #ddd;padding:6px;text-align:center}
-    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-    .small{font-size:13px}
-    .vars{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-    .vars .v{padding:6px;border:1px solid #eee;border-radius:6px}
-    .note{font-size:13px;color:#444;margin-top:8px}
-    button{padding:8px 12px}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Home</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Truth Table → Voltage Table</h1>
-  <p class="note">Paste a Boolean expression using variables (letters). Operators accepted: <code>!</code> or <code>~</code> for NOT, <code>&amp;&amp;</code> or <code>&</code> or <code>AND</code> for AND, <code>||</code> or <code>|</code> or <code>OR</code> for OR, <code>^</code> or <code>XOR</code> for XOR. Parentheses allowed.</p>
 
-  <label>Boolean expression:</label>
-  <textarea id="expr" placeholder="e.g. (!A && (B && (C && D))) || ((!A && (C && D)) || (!B && D))">(!A && (B && (C && D))) || ((!A && (C && D)) || (!B && D))</textarea>
-
-  <div class="controls">
-    <div>
-      <label>High voltage (V): <input id="vhi" type="number" value="3.3" step="0.1"></label>
-    </div>
-    <div>
-      <label>Low voltage (V): <input id="vlo" type="number" value="0" step="0.1"></label>
-    </div>
-    <div>
-      <label><input id="showVoltages" type="checkbox" checked> Show voltage table</label>
-    </div>
-    <div>
-      <button id="generate">Generate tables</button>
-      <button id="downloadCsv">Download CSV</button>
-    </div>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="dot"></span>YOUR-NAME.IO</div>
+    <nav class="navlinks">
+      <a href="index.html" class="active">Home</a>
+      <a href="truth-table.html">Truth Table</a>
+      <a href="companies.html">Companies</a>
+    </nav>
   </div>
+</header>
 
-  <div id="varArea" class="vars"></div>
+<main class="page">
+  <section class="sheet">
+    <span class="fid fid-tl"></span><span class="fid fid-tr"></span>
+    <span class="fid fid-bl"></span><span class="fid fid-br"></span>
 
-  <div id="out"></div>
+    <p class="eyebrow">Rev. 01 &nbsp;·&nbsp; Personal Datasheet</p>
+    <h1>YOUR NAME</h1>
+    <p>One or two sentences about who you are and what you're into — replace this placeholder paragraph with your own short intro.</p>
 
-<script>
-// Utilities
-function sanitizeExpression(raw){
-  // normalize operators & strings
-  let s = raw.replace(/\bAND\b/gi,'&&').replace(/\bOR\b/gi,'||').replace(/\bXOR\b/gi,'^');
-  s = s.replace(/∧/g,'&&').replace(/∨/g,'||').replace(/¬/g,'!').replace(/~/g,'!');
-  // allow common single-char replacements
-  s = s.replace(/\bNOT\b/gi,'!');
-  // remove characters that are not allowed (letters, digits, whitespace, parentheses, !_&|^)
-  // but keep commas, dots just in case (we'll prohibit later)
-  return s;
-}
+    <hr class="rule" />
 
-function extractVars(expr){
-  const vars = new Set();
-  // find letter names (consecutive letters/numbers/_) but we'll prefer single-letter variables
-  // treat A..Z and optionally multi-letter like DATA
-  expr.replace(/[A-Za-z][A-Za-z0-9_]*/g, (m)=>{ if(!/^(AND|OR|XOR|NOT)$/i.test(m)) vars.add(m); });
-  return Array.from(vars).sort();
-}
+    <h2>Specifications</h2>
+    <table class="spec-table">
+      <tr>
+        <td class="field">Studying at</td>
+        <td class="value placeholder">Your school / program goes here</td>
+      </tr>
+      <tr>
+        <td class="field">Year / status</td>
+        <td class="value placeholder">e.g. Junior, Class of 2027</td>
+      </tr>
+      <tr>
+        <td class="field">Currently</td>
+        <td class="value placeholder">Your current job / internship / role goes here</td>
+      </tr>
+      <tr>
+        <td class="field">Focus areas</td>
+        <td class="value placeholder">e.g. digital logic, semiconductor devices, embedded systems</td>
+      </tr>
+      <tr>
+        <td class="field">Contact</td>
+        <td class="value placeholder">email / LinkedIn / GitHub links go here</td>
+      </tr>
+    </table>
 
-function safeToJS(expr, vars){
-  // Replace operators synonyms
-  let s = expr;
-  s = s.replace(/\band\b/gi,'&&').replace(/\bor\b/gi,'||').replace(/\bnot\b/gi,'!').replace(/\bxor\b/gi,'^');
-  s = s.replace(/[∧]/g,'&&').replace(/[∨]/g,'||').replace(/[¬~]/g,'!');
-  // collapse multiple spaces
-  s = s.replace(/\s+/g,' ');
-  // validate allowed characters: letters, digits, whitespace, parentheses, ! & | ^ and punctuation for variable names _
-  if(!/^[A-Za-z0-9_\s\(\)\!\&\|\^\<\>\=\?\:\.\,\'\"\+\-]*$/.test(s)){
-    throw new Error('Expression contains invalid characters. Only letters, digits, parentheses and operators ! & | ^ are allowed.');
-  }
-  // ensure tokens that look like variables are present in vars list
-  // We'll build a function using the variables as arguments
-  return s;
-}
+    <hr class="rule" />
 
-function makeEvaluator(jsExpr, vars){
-  // Build a function that accepts the variables in order and returns the boolean result.
-  // To be safe, only pass plain boolean values and don't expose global scope.
-  const args = vars.join(',');
-  // create function body - ensure expression returns boolean
-  const body = 'return !!(' + jsExpr + ');';
-  try{
-    // eslint-disable-next-line no-new-func
-    const f = new Function(args, body);
-    return f;
-  }catch(e){
-    throw new Error('Could not parse expression: ' + e.message);
-  }
-}
+    <h2>On this site</h2>
+    <p>
+      <a href="truth-table.html">Truth Table → Voltage Table</a> — a tool that converts a Boolean expression into
+      a logical truth table and a physical voltage table.
+    </p>
+    <p>
+      <a href="companies.html">Semiconductor Companies</a> — a running list of chip-industry companies with
+      space for careers and internship links as I collect them.
+    </p>
+  </section>
+</main>
 
-function generateTable(vars, evalFn){
-  const n = vars.length;
-  const rows = [];
-  const total = 1<<n;
-  for(let i=0;i<total;i++){
-    const row = {};
-    for(let j=0;j<n;j++){
-      row[vars[j]] = !!(i & (1<<(n-1-j)));
-    }
-    // call evalFn with values in the vars order
-    const args = vars.map(v=>row[v]);
-    row['OUT'] = !!evalFn(...args);
-    rows.push(row);
-  }
-  return rows;
-}
+<footer class="sitefoot">Built &amp; maintained by you · updated 2026</footer>
 
-function renderTables(vars, rows, vhi, vlo, inputActiveLowMap, outputActiveLow){
-  const out = document.getElementById('out');
-  out.innerHTML = '';
-
-  // Truth table
-  const t = document.createElement('table');
-  const thead = document.createElement('thead');
-  const trh = document.createElement('tr');
-  vars.forEach(v=>{ const th = document.createElement('th'); th.textContent = v; trh.appendChild(th); });
-  const thOut = document.createElement('th'); thOut.textContent = 'OUT'; trh.appendChild(thOut);
-  thead.appendChild(trh); t.appendChild(thead);
-  const tb = document.createElement('tbody');
-  rows.forEach(r=>{
-    const tr = document.createElement('tr');
-    vars.forEach(v=>{ const td=document.createElement('td'); td.textContent = r[v] ? '1' : '0'; tr.appendChild(td); });
-    const tdOut = document.createElement('td'); tdOut.textContent = r['OUT'] ? '1':'0'; tr.appendChild(tdOut);
-    tb.appendChild(tr);
-  });
-  t.appendChild(tb);
-  out.appendChild(document.createElement('h3')).textContent = 'Truth Table (logical values)';
-  out.appendChild(t);
-
-  // Voltage table
-  const vt = document.createElement('table');
-  const vthead = document.createElement('thead');
-  const vtrh = document.createElement('tr');
-  vars.forEach(v=>{ const th=document.createElement('th'); th.textContent = v + (inputActiveLowMap[v] ? '(L)' : ''); vtrh.appendChild(th); });
-  const thVOut = document.createElement('th'); thVOut.textContent = 'OUT' + (outputActiveLow ? '(L)' : ''); vtrh.appendChild(thVOut);
-  vthead.appendChild(vtrh); vt.appendChild(vthead);
-  const vtb = document.createElement('tbody');
-  rows.forEach(r=>{
-    const tr = document.createElement('tr');
-    vars.forEach(v=>{
-      const td=document.createElement('td');
-      // map logical to physical voltage considering input active-low
-      const logical = r[v];
-      const phys = inputActiveLowMap[v] ? (!logical) : logical; // if active-low, logical true => physical low
-      td.textContent = phys ? vhi : vlo;
-      tr.appendChild(td);
-    });
-    // output
-    const tdOut=document.createElement('td');
-    const outLogical = r['OUT'];
-    const outPhys = outputActiveLow ? (!outLogical) : outLogical;
-    tdOut.textContent = outPhys ? vhi : vlo;
-    vtb.appendChild(tr); tr.appendChild(tdOut);
-  });
-  vt.appendChild(vtb);
-  out.appendChild(document.createElement('h3')).textContent = 'Voltage Table (physical voltages)';
-  out.appendChild(vt);
-}
-
-function downloadCSV(vars, rows, vhi, vlo, inputActiveLowMap, outputActiveLow){
-  const lines = [];
-  const header = [...vars, 'OUT', ...vars.map(v=>'V_'+v), 'V_OUT'];
-  lines.push(header.join(','));
-  rows.forEach(r=>{
-    const logicals = vars.map(v=> r[v] ? '1':'0');
-    const outL = r['OUT'] ? '1':'0';
-    const voltages = vars.map(v=>{
-      const phys = inputActiveLowMap[v] ? (!r[v]) : r[v];
-      return phys ? vhi : vlo;
-    });
-    const outPhys = outputActiveLow ? (!r['OUT']) : r['OUT'];
-    lines.push([...logicals, outL, ...voltages, (outPhys? vhi: vlo)].join(','));
-  });
-  const blob = new Blob([lines.join('\n')], {type:'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'truth_voltage_table.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-}
-
-// UI wiring
-const exprEl = document.getElementById('expr');
-const varArea = document.getElementById('varArea');
-let currentVars = [];
-
-function buildVarControls(vars){
-  varArea.innerHTML='';
-  const map = {};
-  vars.forEach(v=>{
-    const div = document.createElement('div'); div.className='v';
-    const lbl = document.createElement('label'); lbl.className='small';
-    const chk = document.createElement('input'); chk.type='checkbox'; chk.dataset.var = v; chk.id = 'al_'+v;
-    lbl.appendChild(chk);
-    lbl.appendChild(document.createTextNode(' Active-low ' + v));
-    div.appendChild(lbl);
-    map[v]=chk;
-    varArea.appendChild(div);
-  });
-  // output active-low
-  const outDiv = document.createElement('div'); outDiv.className='v';
-  const outLbl = document.createElement('label'); outLbl.className='small';
-  const outChk = document.createElement('input'); outChk.type='checkbox'; outChk.id='al_out';
-  outLbl.appendChild(outChk); outLbl.appendChild(document.createTextNode(' Active-low OUT'));
-  outDiv.appendChild(outLbl);
-  varArea.appendChild(outDiv);
-}
-
-function regenerateVarsPreview(){
-  const raw = sanitizeExpression(exprEl.value);
-  const vars = extractVars(raw);
-  currentVars = vars;
-  buildVarControls(vars);
-}
-
-exprEl.addEventListener('input', ()=>{
-  try{ regenerateVarsPreview(); }catch(e){}
-});
-
-document.getElementById('generate').addEventListener('click', ()=>{
-  try{
-    const raw = exprEl.value.trim();
-    const s = sanitizeExpression(raw);
-    const vars = extractVars(s);
-    if(vars.length===0) throw new Error('No variables found in expression. Use letters like A, B, C.');
-    const jsExpr = safeToJS(s, vars);
-    const evaluator = makeEvaluator(jsExpr, vars);
-    const rows = generateTable(vars, evaluator);
-
-    // read active-low settings
-    const inputActiveLowMap = {};
-    vars.forEach(v=>{ const el = document.getElementById('al_'+v); inputActiveLowMap[v] = !!(el && el.checked); });
-    const outputActiveLow = !!document.getElementById('al_out').checked;
-    const vhi = parseFloat(document.getElementById('vhi').value);
-    const vlo = parseFloat(document.getElementById('vlo').value);
-
-    renderTables(vars, rows, vhi, vlo, inputActiveLowMap, outputActiveLow);
-  }catch(e){
-    alert('Error: ' + e.message);
-  }
-});
-
-document.getElementById('downloadCsv').addEventListener('click', ()=>{
-  try{
-    const raw = exprEl.value.trim();
-    const s = sanitizeExpression(raw);
-    const vars = extractVars(s);
-    if(vars.length===0) throw new Error('No variables found.');
-    const jsExpr = safeToJS(s, vars);
-    const evaluator = makeEvaluator(jsExpr, vars);
-    const rows = generateTable(vars, evaluator);
-    const inputActiveLowMap = {};
-    vars.forEach(v=>{ const el = document.getElementById('al_'+v); inputActiveLowMap[v] = !!(el && el.checked); });
-    const outputActiveLow = !!document.getElementById('al_out').checked;
-    const vhi = parseFloat(document.getElementById('vhi').value);
-    const vlo = parseFloat(document.getElementById('vlo').value);
-    downloadCSV(vars, rows, vhi, vlo, inputActiveLowMap, outputActiveLow);
-  }catch(e){ alert('Error: ' + e.message); }
-});
-
-// initial setup
-regenerateVarsPreview();
-</script>
 </body>
 </html>
